@@ -1,0 +1,25 @@
+sitemap door label="Doors"
+{
+	Frame label="Front door"
+	{
+		Text item=frontdoor
+		Text item=frontdoor_lastupdate
+		Text item=frontdoor_voltage
+		Text item=frontdoor_counter
+	}
+	Frame label="Back door"
+	{
+		Text item=backdoor
+		//Text item=backdoorS
+		Text item=backdoor_lastupdate
+		Text item=backdoor_voltage
+		Text item=backdoor_counter
+	}	
+	Frame label="Shed door"
+	{
+		Text item=sheddoor
+		Text item=sheddoor_lastupdate
+		Text item=shedlock
+		Text item=shedlock_lastupdate
+	}	
+}
