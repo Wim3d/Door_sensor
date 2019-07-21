@@ -1,0 +1,17 @@
+Contact frontdoor "Front door is: [%s]"	<frontdoor> (doors) {mqtt="<[mosquitto:sensor/doorsensor2:state:default]"} 
+Number frontdoor_voltage "Voltage front door sensor: [%.2f]" <lowbattery> {mqtt="<[mosquitto:sensor/doorsensor2/voltage:state:default]"} 
+Number frontdoor_counter "Front door openings: [%.0f]" <frontdoor> {mqtt="<[mosquitto:sensor/doorsensor2/counter:state:default]"} 
+DateTime frontdoor_lastupdate "Last update of front door [%1$td-%1$tm-%1$tY %1$tR]" <time>
+
+Contact backdoor "Backdoor is: [%s]"	<door> (doors) {mqtt="<[mosquitto:sensor/doorsensor1:state:default]"} 
+Number backdoor_voltage "Voltage back door sensor: [%.2f]" <lowbattery> {mqtt="<[mosquitto:sensor/doorsensor1/voltage:state:default]"} 
+Number backdoor_counter "Backdoor openings: [%.0f]" <backdoor> {mqtt="<[mosquitto:sensor/doorsensor1/counter:state:default]"} 
+DateTime backdoor_lastupdate "Last update of back door [%1$td-%1$tm-%1$tY %1$tR]" <time>
+
+Contact sheddoor "shed door is: [%s]"	<door> (doors) {mqtt="<[mosquitto:sensor/doorsensor3:state:default]"} 
+DateTime sheddoor_lastupdate "Last update of sheddoor [%1$td-%1$tm-%1$tY %1$tR]" <time>
+
+Contact shedlock "shed lock is: [%s]"	<lock> (doors) {mqtt="<[mosquitto:sensor/locksensor3:state:default]"} 
+DateTime shedlock_lastupdate "Last update of shedlock [%1$td-%1$tm-%1$tY %1$tR]" <time>
+
+Group:Contact:OR(OPEN, CLOSED) 	doors
