@@ -1,0 +1,119 @@
+var Timer alarmdelaytimer = null
+var Timer warningdelaytimer1 = null
+var Timer warningdelaytimer2 = null
+
+rule "Door monitor back door"
+when
+	Item backdoor changed to OPEN
+then
+	backdoor_counter.postUpdate((backdoor_counter.state as DecimalType) + 1)
+	if(Door_monitor.state==ON || Alarm_main_state.state==ON)
+  {
+		logInfo("Door monitor","back door opened")
+		sendTelegram("bot1", "back door opened")
+	}
+	warningdelaytimer1 = createTimer(now.plusMinutes(10)) [|
+		if(backdoor.state==OPEN)
+		{
+			//sendTelegram("bot1", "Back door opened too long")
+			logInfo("Door monitor","back door opened too long")
+			warningdelaytimer1 = null	
+		}
+	]
+end
+
+rule "cancel back door warning timer"
+when
+	Item backdoor changed from OPEN to CLOSED
+then
+	if(warningdelaytimer1 !== null) 
+	{
+		warningdelaytimer1.cancel()
+		logInfo("Door monitor","back door closed, timer canceled")
+	}
+end
+
+rule "Door monitor front door"
+when
+	Item frontdoor changed to OPEN
+then
+	frontdoor_counter.postUpdate((frontdoor_counter.state as DecimalType) + 1)
+	if(Door_monitor.state==ON || Alarm_main_state.state==ON)
+    {
+		logInfo("Door monitor","front door opened")
+		sendTelegram("bot1", "front door opened")
+	}
+	warningdelaytimer2 = createTimer(now.plusMinutes(10)) [|
+		if(frontdoor.state==OPEN)
+		{
+			sendTelegram("bot1", "front door opened too long")
+			logInfo("Door monitor","front door opened too long")
+			warningdelaytimer2 = null	
+		}
+	]
+end
+
+rule "cancel front door warning timer"
+when
+	Item frontdoor changed from OPEN to CLOSED
+then
+	if(warningdelaytimer2 !== null) 
+	{
+		warningdelaytimer2.cancel()
+		logInfo("Door monitor","front door closed, timer canceled")
+	}
+end
+
+rule "Records when frontdoor was last activated"
+when
+  Item frontdoor received update
+then
+  postUpdate(frontdoor_lastupdate, new DateTimeType())
+end
+
+rule "Records when backdoor was last activated"
+when
+  Item backdoor received update
+then
+  postUpdate(backdoor_lastupdate, new DateTimeType())
+end
+
+rule "Records when sheddoor was last activated"
+when
+  Item sheddoor changed
+then
+  postUpdate(sheddoor_lastupdate, new DateTimeType())
+end
+
+rule "Records when shedlock was last activated"
+when
+  Item shedlock changed
+then
+  postUpdate(shedlock_lastupdate, new DateTimeType())
+end
+/*
+rule "Door alarm rule"
+when
+	Item doors changed from CLOSED to OPEN
+then
+	if(Alarm_main_state.state==ON) 	
+    {
+		logInfo("Door alarm","delay, wait for turning off alarm")
+		alarmdelaytimer = createTimer(now.plusMinutes(1)) [|
+			if(Alarm_main_state.state==ON)
+			{
+			sendBroadcastNotification("Door alarm!")
+			sendTelegram("bot1", "Door alarm!")
+			logInfo("Door alarm","Door alarm!")
+			publish("mosquitto","alarm/door", "door alarm!")
+			}
+			else
+			{
+			sendTelegram("bot1", "Door alarm canceled")
+			logInfo("Door alarm","Door alarm canceled")
+			}
+		]
+		alarmdelaytimer = null
+	}
+end
+*/
